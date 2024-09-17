@@ -4,7 +4,7 @@ from books_service.models import Book
 
 
 class BookBaseSerializer(serializers.ModelSerializer):
-    Inventory = serializers.SerializerMethodField("get_inventory")
+    Inventory = serializers.SerializerMethodField()
 
     class Meta:
         model = Book
@@ -12,5 +12,5 @@ class BookBaseSerializer(serializers.ModelSerializer):
             "id", "Title", "Author", "Cover", "Inventory", "Daily_fee"
         )
 
-    def get_inventory(self):
-        return Book.objects.count(Title=self.Title)
+    def get_Inventory(self, book):
+        return Book.objects.filter(Title=book.Title).count()
