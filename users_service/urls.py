@@ -7,5 +7,5 @@ app_name = "users_service"
 routers = DefaultRouter()
 
 urlpatterns = [
-    path(include(routers.urls))
+    path("", include(routers.urls))
 ]
