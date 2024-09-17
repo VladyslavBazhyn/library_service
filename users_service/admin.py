@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from books_service.models import User
+from users_service.models import User
 
-admin.register(User)
+admin.site.register(User)
