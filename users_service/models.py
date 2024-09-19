@@ -1,13 +1,14 @@
+from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
-from django.contrib.auth.models import PermissionsMixin
 from django.utils import timezone
-
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext as _
 
 
 class UserManager(BaseUserManager):
+    """Define a model manager for User model with no username field."""
+
     use_in_migrations = True
 
     def _create_user(self, email, password, **extra_fields):
@@ -24,11 +25,13 @@ class UserManager(BaseUserManager):
         return user
 
     def create_user(self, email, password=None, **extra_fields):
+        """Create and save a regular User with the given email and password."""
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)
         return self._create_user(email, password, **extra_fields)
 
     def create_superuser(self, email, password, **extra_fields):
+        """Create and save a SuperUser with the given email and password."""
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
 
@@ -45,10 +48,15 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+
+    objects = UserManager()
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
+
+    username = None
     email = models.EmailField(
-        unique=True,
-        max_length=255,
-        blank=False,
+        _("email address"),
+        unique=True
     )
 
     nickname = models.CharField(
@@ -91,9 +99,3 @@ class User(AbstractBaseUser, PermissionsMixin):
         _("date joined"),
         default=timezone.now,
     )
-
-    # Add additional fields here if needed
-
-    objects = UserManager()
-
-    USERNAME_FIELD = "email"
