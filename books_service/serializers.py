@@ -9,8 +9,8 @@ class BookBaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = (
-            "id", "Title", "Author", "Cover", "Inventory", "Daily_fee"
+            "id", "title", "author", "cover", "inventory", "daily_fee", "available"
         )
 
     def get_Inventory(self, book):
-        return Book.objects.filter(Title=book.Title).count()
+        return Book.objects.filter(Title=book.Title, available=True).count()
