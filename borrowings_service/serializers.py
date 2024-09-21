@@ -1,10 +1,14 @@
 from rest_framework import serializers
-from rest_framework.decorators import action
 
+from books_service.models import Book
 from borrowings_service.models import Borrowing
 
 
 class BorrowingBaseSerializer(serializers.ModelSerializer):
+    book = serializers.PrimaryKeyRelatedField(
+        queryset=Book.objects.filter(available=True)
+    )
+
     class Meta:
         model = Borrowing
         fields = (
@@ -14,15 +18,17 @@ class BorrowingBaseSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         book = validated_data["book"]
         book.available = False
-        super().create(validated_data)
+        book.save()
+        return super().create(validated_data)
 
 
 class BorrowingListSerializer(BorrowingBaseSerializer):
     class Meta:
         model = Borrowing
         fields = (
-            "borrow_date", "book", "user"
+            "borrow_date", "expected_return_date", "book", "user"
         )
+        extra_kwargs = {"expected_return_date": {"write_only": True}}
 
 
 class BorrowingDetailSerializer(BorrowingBaseSerializer):

@@ -8,7 +8,7 @@ class BorrowingViewSet(viewsets.ModelViewSet):
     queryset = Borrowing.objects.all()
 
     def get_serializer_class(self):
-        serializer_class = BorrowingBaseSerializer
+        serializer_class = BorrowingListSerializer
         if self.action == "list":
             serializer_class = BorrowingListSerializer
         if self.action == "retrieve":

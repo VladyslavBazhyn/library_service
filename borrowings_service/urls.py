@@ -8,7 +8,7 @@ routers = DefaultRouter()
 routers.register("", BorrowingViewSet)
 
 urlpatterns = [
-    path("", include(routers.urls))
+    path("/", include(routers.urls))
 ]
 
 app_name = "borrowings_service"
