@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "users_service",
     "notifications_service",
     "payments_service",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -135,12 +136,20 @@ AUTH_USER_MODEL = "users_service.User"
 AUTH_HEADER_NAME = "HTTP_AUTHORIZE"
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Library service api",
+    "DESCRIPTION": "API for maintain all basic needs in library working",
+    "VERSION": "doode_01",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
