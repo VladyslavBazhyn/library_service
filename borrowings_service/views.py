@@ -1,4 +1,4 @@
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from rest_framework import viewsets
 
 from borrowings_service.models import Borrowing
@@ -19,7 +19,14 @@ class BorrowingViewSet(viewsets.ModelViewSet):
 
     @extend_schema(
         parameters=[
-            OpenApiParameter
+            OpenApiParameter(
+                type=int,
+                name="user_id"
+            ),
+            OpenApiParameter(
+                type=bool,
+                name="is_active"
+            )
         ]
     )
     def list(self, request, *args, **kwargs):
@@ -31,5 +38,13 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         by filtering against a user id and whether borrowing is still active or not.
         """
         queryset = self.queryset
+
+        if self.request.query_params.get("user_id", None):
+            user_id = self.request.query_params.get("user_id")
+            queryset = queryset.filter(user_id=user_id)
+
+        if self.request.query_params.get("is_active", None):
+            status = self.request.query_params.get("is_active")
+            queryset = queryset.filter(is_active=status)
 
         return queryset

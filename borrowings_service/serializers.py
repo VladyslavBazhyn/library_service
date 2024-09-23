@@ -12,7 +12,7 @@ class BorrowingBaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Borrowing
         fields = (
-            "id", "borrow_date", "expected_return_date", "actual_return_date", "book", "user"
+            "id", "borrow_date", "expected_return_date", "actual_return_date", "is_active", "book", "user"
         )
 
     def create(self, validated_data):
@@ -26,7 +26,7 @@ class BorrowingListSerializer(BorrowingBaseSerializer):
     class Meta:
         model = Borrowing
         fields = (
-            "borrow_date", "expected_return_date", "book", "user"
+            "borrow_date", "expected_return_date", "is_active", "book", "user"
         )
         extra_kwargs = {"expected_return_date": {"write_only": True}}
 
