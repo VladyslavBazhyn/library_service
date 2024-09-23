@@ -1,8 +1,11 @@
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from borrowings_service.models import Borrowing
-from borrowings_service.serializers import BorrowingBaseSerializer, BorrowingListSerializer, BorrowingDetailSerializer
+from borrowings_service.serializers import BorrowingBaseSerializer, BorrowingListSerializer, BorrowingDetailSerializer, \
+    BorrowingReturnSerializer
 
 
 class BorrowingViewSet(viewsets.ModelViewSet):
@@ -14,8 +17,22 @@ class BorrowingViewSet(viewsets.ModelViewSet):
             serializer_class = BorrowingListSerializer
         if self.action == "retrieve":
             serializer_class = BorrowingDetailSerializer
+        if self.action == "return_borrowing":
+            serializer_class = BorrowingReturnSerializer
 
         return serializer_class
+
+    @action(detail=True, methods=["POST"], url_path="return", name="return", url_name="return")
+    def return_borrowing(self, request, pk):
+        borrowing = Borrowing.objects.get(id=pk)
+        borrowing.is_active = False
+        borrowing.save()
+
+        book = borrowing.book
+        book.available = True
+        book.save()
+
+        return Response(status=status.HTTP_200_OK)
 
     @extend_schema(
         parameters=[

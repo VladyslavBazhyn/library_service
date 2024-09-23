@@ -29,11 +29,19 @@ class BorrowingListSerializer(BorrowingBaseSerializer):
             "borrow_date", "expected_return_date", "is_active", "book", "user"
         )
         extra_kwargs = {"expected_return_date": {"write_only": True}}
+        read_only_fields = ("is_active", )
 
 
 class BorrowingDetailSerializer(BorrowingBaseSerializer):
     class Meta:
         model = Borrowing
         fields = (
-            "borrow_date", "expected_return_date", "book", "user"
+            "borrow_date", "expected_return_date", "book", "user", "is_active"
         )
+        read_only_fields = ("is_active", )
+
+
+class BorrowingReturnSerializer(BorrowingBaseSerializer):
+    class Meta:
+        model = Borrowing
+        fields = ("actual_return_date", )
