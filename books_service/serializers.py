@@ -14,6 +14,13 @@ class BookBaseSerializer(serializers.ModelSerializer):
 
     def get_available(self, book):
         books_amount = Book.objects.get(id=book.id).inventory
+
+        if not books_amount > 0:
+            book.available = False
+        else:
+            book.available = True
+
+        book.save()
         return books_amount > 0
 
 
