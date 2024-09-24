@@ -29,7 +29,7 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         borrowing.save()
 
         book = borrowing.book
-        book.available = True
+        book.amount += 1
         book.save()
 
         return Response(status=status.HTTP_200_OK)

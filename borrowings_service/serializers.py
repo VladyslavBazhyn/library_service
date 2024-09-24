@@ -17,7 +17,7 @@ class BorrowingBaseSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         book = validated_data["book"]
-        book.available = False
+        book.amount -= 1
         book.save()
         return super().create(validated_data)
 
