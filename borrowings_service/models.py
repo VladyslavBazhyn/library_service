@@ -13,3 +13,8 @@ class Borrowing(models.Model):
     is_active = models.BooleanField(default=True)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        self.book.inventory -= 1
+        self.book.save()
+        super().save(*args, **kwargs)
