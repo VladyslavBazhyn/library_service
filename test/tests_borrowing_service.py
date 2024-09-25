@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from rest_framework.reverse import reverse
 
 from rest_framework.test import APIClient
 
@@ -31,3 +32,13 @@ class BorrowingTest(TestCase):
 
         self.assertEqual(book.inventory, 0)
         self.assertEqual(book.available, False)
+
+        res = self.client.post(
+            path=reverse("borrowings_service:return", args=[borrowing_1.id]),
+            data={"actual_return_date": "2025-01-01"}
+        )
+        print(res.content)
+
+        book.refresh_from_db()
+        self.assertEqual(book.inventory, 1)
+        self.assertEqual(book.available, True)
