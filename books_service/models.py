@@ -12,3 +12,7 @@ class Book(models.Model):
     daily_fee = models.DecimalField(decimal_places=5, max_digits=10)
     inventory = models.PositiveIntegerField()
     available = models.BooleanField(default=True)
+
+    def save(self, *args, **kwargs):
+        self.available = self.inventory > 0
+        super().save(*args, **kwargs)
