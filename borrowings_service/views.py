@@ -4,25 +4,6 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-
-@action(detail=True, methods=["POST"], url_path="return", name="return", url_name="return")
-def return_borrowing(request, pk):
-    print("Borrowing pk:", pk)
-    borrowing = Borrowing.objects.get(id=pk)
-    print("Borrowing:", borrowing)
-    borrowing.is_active = False
-    print("Borrowing is active:", borrowing.is_active)
-    borrowing.save()
-
-    book = borrowing.book
-    print("Book:", book)
-    print("Book inventory:", book.inventory)
-    book.inventory += 1
-    print("Book inventory:", book.inventory)
-    book.save()
-
-    return HttpResponse(status=status.HTTP_200_OK)
-
 from borrowings_service.models import Borrowing
 from borrowings_service.serializers import BorrowingBaseSerializer, BorrowingListSerializer, BorrowingDetailSerializer, \
     BorrowingReturnSerializer
@@ -42,17 +23,17 @@ class BorrowingViewSet(viewsets.ModelViewSet):
 
         return serializer_class
 
-    # @action(detail=True, methods=["POST"], url_path="return", name="return", url_name="return")
-    # def return_borrowing(self, request, pk):
-    #     borrowing = Borrowing.objects.get(id=pk)
-    #     borrowing.is_active = False
-    #     borrowing.save()
-    #
-    #     book = borrowing.book
-    #     book.inventory += 1
-    #     book.save()
-    #
-    #     return Response(status=status.HTTP_200_OK)
+    @action(detail=True, methods=["POST"], url_path="return", name="return", url_name="return")
+    def return_borrowing(self, request, pk):
+        borrowing = Borrowing.objects.get(id=pk)
+        borrowing.is_active = False
+        borrowing.save()
+
+        book = borrowing.book
+        book.inventory += 1
+        book.save()
+
+        return HttpResponse(status=status.HTTP_200_OK)
 
     @extend_schema(
         parameters=[

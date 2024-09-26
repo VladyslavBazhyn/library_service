@@ -4,7 +4,7 @@ from rest_framework.reverse import reverse
 
 from rest_framework.test import APIClient
 
-from borrowings_service.serializers import BorrowingListSerializer
+from borrowings_service.serializers import BorrowingListSerializer, BorrowingBaseSerializer, BorrowingDetailSerializer
 from test.sample_functions import sample_book, sample_borrowing
 
 User = get_user_model()
@@ -20,25 +20,56 @@ class BorrowingTest(TestCase):
         )
         self.client.force_authenticate(self.user)
 
-    def test_creating_borrowing_decrease_book_inventory(self):
+    def test_rotating_book_inventory_during_borrowing_creation_returning(self):
 
         book = sample_book(inventory=2)
-        borrowing_1 = sample_borrowing(book=book, user_id=self.user.pk)
 
+        # Prepare the raw data for borrowing creation
+        borrowing_data = {
+            "book": book.id,
+            "user": self.user.pk,
+            "expected_return_date": "2025-01-01",
+        }
+
+        # Create serializer in way to trigger save() method of it
+        borrowing_serializer_1 = BorrowingListSerializer(data=borrowing_data)
+
+        # Validate and save the serializer to trigger the creating logic
+        if borrowing_serializer_1.is_valid():
+            borrowing_serializer_1.save()
+        else:
+            print(borrowing_serializer_1.errors)  # In case of validation errors
+
+        # Reload the book instance from the database to check the inventory change
+        book.refresh_from_db()
+
+        # Now assert that the inventory has been updated
         self.assertEqual(book.inventory, 1)
         self.assertEqual(book.available, True)
 
-        borrowing_2 = sample_borrowing(book=book, user_id=self.user.pk)
+        # Create serializer in way to trigger save() method of it
+        borrowing_serializer_2 = BorrowingListSerializer(data=borrowing_data)
 
+        # Validate and save the serializer to trigger the creating logic
+        if borrowing_serializer_2.is_valid():
+            borrowing_serializer_2.save()
+        else:
+            print(borrowing_serializer_2.errors)  # In case of validation errors
+
+        # Reload the book instance from the database to check the inventory change
+        book.refresh_from_db()
+
+        # Now assert that the inventory has been updated
         self.assertEqual(book.inventory, 0)
         self.assertEqual(book.available, False)
 
+        # pk of first created in this test borrowing serializer is 1
         res = self.client.post(
-            path=reverse("borrowings_service:return", args=[borrowing_1.id]),
+            path=reverse("borrowings_service:borrowing-return", args=[1]),
             data={"actual_return_date": "2025-01-01"}
         )
-        print(res.content)
-
+        # Now changing of book inventory should be saved
         book.refresh_from_db()
+
         self.assertEqual(book.inventory, 1)
         self.assertEqual(book.available, True)
