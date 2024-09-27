@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -32,7 +33,7 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         book.inventory += 1
         book.save()
 
-        return Response(status=status.HTTP_200_OK)
+        return HttpResponse(status=status.HTTP_200_OK)
 
     @extend_schema(
         parameters=[

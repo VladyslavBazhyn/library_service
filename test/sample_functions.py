@@ -1,4 +1,5 @@
 from books_service.models import Book
+from borrowings_service.models import Borrowing
 
 
 def sample_book(**kwargs):
@@ -9,7 +10,7 @@ def sample_book(**kwargs):
         "inventory": 1,
         "daily_fee": 10
     }
-    print(kwargs)
+
     for key, value in kwargs.items():
         book_data.update({key: value})
 
@@ -20,3 +21,19 @@ def sample_book(**kwargs):
         inventory=book_data["inventory"],
         daily_fee=book_data["daily_fee"]
     )
+
+
+def sample_borrowing(**kwargs):
+    borrowing_data = {
+        "book": sample_book(),
+        "expected_return_date": "2025-01-01"
+    }
+    for key, value in kwargs.items():
+        borrowing_data.update({key: value})
+
+    return Borrowing.objects.create(
+        book=borrowing_data["book"],
+        expected_return_date=borrowing_data["expected_return_date"],
+        user_id=borrowing_data["user_id"]
+    )
+
