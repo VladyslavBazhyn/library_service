@@ -13,7 +13,7 @@ User = get_user_model()
 class BorrowingTest(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create_user(
+        self.user = User.objects.create_superuser(
             email="test@test.com",
             password="testpassword",
             nickname="nickname"
@@ -65,7 +65,7 @@ class BorrowingTest(TestCase):
 
         # pk of first created in this test borrowing serializer is 1
         res = self.client.post(
-            path=reverse("borrowings_service:borrowing-return", args=[1]),
+            path=reverse("borrowings_service:borrowing-return", args=[2]),
             data={"actual_return_date": "2025-01-01"}
         )
         # Now changing of book inventory should be saved

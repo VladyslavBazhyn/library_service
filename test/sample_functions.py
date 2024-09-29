@@ -1,5 +1,11 @@
+from rest_framework.reverse import reverse
+
 from books_service.models import Book
 from borrowings_service.models import Borrowing
+
+
+def get_book_detail_url(pk: int) -> str:
+    return reverse("books_service:book-detail", args=[pk])
 
 
 def sample_book(**kwargs):
