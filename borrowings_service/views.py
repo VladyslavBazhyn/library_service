@@ -61,25 +61,19 @@ class BorrowingReturnView(viewsets.ModelViewSet):
         """
         try:
             borrowing = Borrowing.objects.get(id=pk)
-            print("Borrowing:", borrowing)
         except Borrowing.DoesNotExist:
             return Response({"error": "Borrowing not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        print("Borrowing is active:", borrowing.is_active)
         borrowing.is_active = False
-        print("Borrowing is active:", borrowing.is_active)
         borrowing.save()
 
         # Update the book's inventory
         book = borrowing.book
-        print("Book inventory:", book.inventory)
         book.inventory += 1
-        print("Book inventory:", book.inventory)
         book.save()
 
         # Use the BorrowingReturnSerializer to update the actual_return_date
         serializer = BorrowingReturnSerializer(borrowing, data=request.data, partial=True)
-        print("Borrowing serializer:", serializer)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
