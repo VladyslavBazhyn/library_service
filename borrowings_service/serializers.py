@@ -16,12 +16,6 @@ class BorrowingBaseSerializer(serializers.ModelSerializer):
             "id", "borrow_date", "expected_return_date", "actual_return_date", "is_active", "book", "user"
         )
 
-    def create(self, validated_data):
-        book = validated_data["book"]
-        book.inventory -= 1
-        book.save()
-        return super().create(validated_data)
-
 
 class BorrowingListSerializer(BorrowingBaseSerializer):
     class Meta:
@@ -29,22 +23,37 @@ class BorrowingListSerializer(BorrowingBaseSerializer):
         fields = (
             "borrow_date", "expected_return_date", "is_active", "book", "user"
         )
-        extra_kwargs = {"expected_return_date": {"write_only": True}}
-        read_only_fields = ("is_active", )
 
 
 class BorrowingDetailSerializer(BorrowingBaseSerializer):
-    book = BookBaseSerializer()
+    book = BookBaseSerializer(read_only=True)
 
     class Meta:
         model = Borrowing
         fields = (
-            "borrow_date", "expected_return_date", "book", "user", "is_active"
+            "borrow_date", "expected_return_date", "book", "user", "is_active", "actual_return_date"
         )
-        read_only_fields = ("is_active", )
+        read_only_fields = ("is_active", "actual_return_date", "user")
 
 
 class BorrowingReturnSerializer(BorrowingBaseSerializer):
     class Meta:
         model = Borrowing
         fields = ("actual_return_date", )
+
+
+class BorrowingCreateSerializer(BorrowingReturnSerializer):
+    class Meta:
+        model = Borrowing
+        fields = ("expected_return_date", "book")
+
+    def create(self, validated_data):
+        book = validated_data["book"]
+        book.inventory -= 1
+        book.save()
+        return super().create(validated_data)
+
+    def validate(self, attrs):
+        if attrs["book"].inventory <= 0:
+            raise ValueError("Book inventory is not enough to make borrowing.")
+        return attrs
