@@ -10,7 +10,7 @@ from test.sample_functions import get_book_detail_url
 
 USER_REGISTER_URL = reverse("users_service:register")
 BOOK_LIST_URl = reverse("books_service:book-list")
-BORROWING_LIST_URL = reverse("borrowings_service:borrowing-list")
+BORROWING_LIST_URL = reverse("borrowings_service:list")
 
 User = get_user_model()
 
