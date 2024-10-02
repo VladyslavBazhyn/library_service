@@ -32,7 +32,8 @@ def sample_book(**kwargs):
 def sample_borrowing(**kwargs):
     borrowing_data = {
         "book": sample_book(),
-        "expected_return_date": "2025-01-01"
+        "expected_return_date": "2025-01-01",
+        "user_id": None
     }
     for key, value in kwargs.items():
         borrowing_data.update({key: value})
