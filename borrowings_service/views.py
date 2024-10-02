@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from rest_framework import viewsets, status, generics, views
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from borrowings_service.models import Borrowing
@@ -43,6 +44,10 @@ class BorrowingListView(generics.ListAPIView):
             borrowing_status = self.request.query_params.get("is_active")
             queryset = queryset.filter(is_active=borrowing_status)
 
+        if self.request.user.is_staff is not True:
+            """Non admin users should see only theirs borrowings"""
+            queryset = queryset.filter(user_id=self.request.user.pk)
+
         return queryset
 
 
@@ -64,8 +69,12 @@ class BorrowingReturnView(viewsets.ModelViewSet):
         except Borrowing.DoesNotExist:
             return Response({"error": "Borrowing not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        borrowing.is_active = False
-        borrowing.save()
+        # Make sure that borrowing still active
+        if borrowing.is_active:
+            borrowing.is_active = False
+            borrowing.save()
+        else:
+            return Response({"error": "Borrowing not active."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Update the book's inventory
         book = borrowing.book
@@ -84,6 +93,7 @@ class BorrowingReturnView(viewsets.ModelViewSet):
 class BorrowingCreateView(generics.CreateAPIView):
     queryset = Borrowing.objects.all()
     serializer_class = BorrowingCreateSerializer
+    permission_classes = (IsAuthenticated, )
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
