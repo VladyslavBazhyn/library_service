@@ -1,11 +1,15 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from rest_framework import status
 
+from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from test.sample_functions import sample_book
 
 User = get_user_model()
+
+BOOK_LIST_URL = reverse("books_service:book-list")
 
 
 class BookTest(TestCase):
@@ -32,4 +36,16 @@ class BookTest(TestCase):
 
     def test_book_creation_allowed_only_for_admin(self):
         """Test whether only admin can create books"""
-        ...
+
+        res = self.client.post(
+            BOOK_LIST_URL,
+            data={
+                "title": "Testbook",
+                "author": "Testauthor",
+                "cover": "HARD",
+                "daily_fee": 6.6,
+                "inventory": 10
+            }
+        )
+        # Regular user shouldn't have access to create a book.
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
