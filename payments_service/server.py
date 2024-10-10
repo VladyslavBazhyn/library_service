@@ -6,13 +6,18 @@ Stripe Sample.
 Python 3.6 or newer required.
 """
 import os
-from flask import Flask, redirect, request
 
 import stripe
+from flask import Flask
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
 # This test secret API key is a placeholder. Don't include personal details in requests with this key.
 # To see your test secret API key embedded in code samples, sign in to your Stripe account.
 # You can also find your test secret API key at https://dashboard.stripe.com/test/apikeys.
-stripe.api_key = 'sk_test_51Q5nTOKwSZK9imXGOkCnYUo40Zj36JpDHTfe3ti0GglZCcXZw2AkvvwbXRSZOfloqUWosJf6PxhiIwNndw5wAMhw00qHU5OT9m'
+stripe.api_key = os.environ.get("STRIPE_SECRET_KEY", None)
 
 app = Flask(__name__,
             static_url_path='',

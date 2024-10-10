@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from payments_service.views import PaymentViewSet, test_payment
+from payments_service.views import PaymentViewSet
 
 router = DefaultRouter()
 
