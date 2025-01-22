@@ -1,0 +1,84 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Django stuff:
+*.log
+*.pot
+*.pyo
+*.coverage
+.coverage.*
+.cache
+coverage.xml
+htmlcov/
+.tox/
+.stestr/
+.dockerignore
+
+# Unit test / coverage reports
+htmlcov
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# Django static files
+staticfiles/
+static/
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Local settings
+.local/
+.env
+.env.*
+
+# Docker files
+Dockerfile
+docker-compose.yml
+docker-compose.override.yml
+
+# Windows-specific files
+Desktop.ini
+
+# Ignore the media files (if you have any uploaded media that you don't want to include in the Docker image)
+media/
+
+# Ignore migrations (optional, if you don't want to include migration files in the Docker image)
+migrations/
+
+# Ignore other unneeded files or directories
+*.bak
+*.tmp
+*.temp
+tmp/
+temp/
+
+.venv
+README.md
+.gitignore
+docker-compose.yaml
